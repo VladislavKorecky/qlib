@@ -1,5 +1,5 @@
 from abc import ABC
-import torch
+
 from torch import Tensor
 
 

@@ -1,7 +1,6 @@
 import torch.nn as nn
-from torch import Tensor
 
-from ai import *
+from q_ai import *
 
 
 class Net(nn.Module, QNet):
