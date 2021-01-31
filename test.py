@@ -1,12 +1,20 @@
+import torch as t
 import torch.nn as nn
+import torch.nn.functional as f
 
 from q_ai import *
 
 
 class Net(nn.Module, QNet):
-    def feed_forward(self, network_input) -> Tensor:
-        return Tensor()
+    def __init__(self):
+        super().__init__()
+        self.l1 = nn.Linear(2, 2)
+        self.l2 = nn.Linear(2, 2)
 
+    def feed_forward(self, state) -> Tensor:
+        output = f.relu(self.l1(state))
+        output = self.l2(output)
+        return output
 
 q = QLearning()
 
@@ -14,9 +22,4 @@ net = Net()
 q.net = net
 
 replay_memory = ReplayMemory(10)
-for i in range(10):
-    replay_memory.add_memory(Memory(i, i, i))
-
-batch = replay_memory.get_random_batch(3)
-for memory in batch:
-    print(memory.__dict__)
+print(q.predict(t.tensor([0, 1], dtype=t.float)))

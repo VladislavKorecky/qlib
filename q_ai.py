@@ -38,3 +38,15 @@ class Memory:
 class QLearning:
     def __init__(self):
         self.net = None
+
+    def get_best_action(self, prediction):
+        best_action_index = 0
+        for action_index in range(len(prediction)):
+            if prediction[action_index].data > prediction[best_action_index].data:
+                best_action_index = action_index
+        return best_action_index
+
+    def predict(self, state):
+        prediction = self.net.feed_forward(state)
+        action = self.get_best_action(prediction)
+        return action
