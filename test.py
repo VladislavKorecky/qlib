@@ -11,7 +11,7 @@ class Net(nn.Module, QNet):
         self.l1 = nn.Linear(2, 2)
         self.l2 = nn.Linear(2, 2)
 
-    def feed_forward(self, state) -> Tensor:
+    def feed_forward(self, state : Tensor) -> Tensor:
         output = f.relu(self.l1(state))
         output = self.l2(output)
         return output
