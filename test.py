@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch.optim as optim
 
 from q_ai import *
 
@@ -19,16 +18,22 @@ class Net(nn.Module, QNet):
     def get_optimizer(self) -> optim.Adam:
         return self.optimizer
 
+    def copy_weights(self, target) -> None:
+        target.l1.weight = nn.Parameter(self.l1.weight.clone())
+        target.l2.weight = nn.Parameter(self.l2.weight.clone())
+
 
 q = QLearning()
 
 net = Net()
+target_net = Net()
 q.net = net
+q.target_net = target_net
 
 replay_memory = ReplayMemory(100)
 
 epsilon = 1
-for i in range(100):
+for i in range(200):
     state = t.tensor([0, 1], dtype=t.float)
 
     if r.random() > epsilon:
@@ -45,3 +50,6 @@ for i in range(100):
 
     if len(replay_memory.memories) > 10:
         q.train(replay_memory.get_random_batch(10))
+
+    if i % 5 == 0:
+        net.copy_weights(target_net)
