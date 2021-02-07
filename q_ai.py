@@ -1,12 +1,10 @@
+import random as r
 from abc import ABC
 
 import torch as t
-from torch import Tensor
-import torch.optim as optim
 import torch.nn.functional as f
-from torch.autograd import Variable
-
-import random as r
+import torch.optim as optim
+from torch import Tensor
 
 
 class QNet(ABC):
@@ -14,6 +12,9 @@ class QNet(ABC):
         pass
 
     def get_optimizer(self) -> optim.Adam:
+        pass
+
+    def copy_weights(self, target) -> None:
         pass
 
 
@@ -45,6 +46,7 @@ class ReplayMemory:
 class QLearning:
     def __init__(self):
         self.net = None
+        self.target_net = None
 
     def get_best_action(self, prediction: Tensor):
         best_action_index = 0
@@ -59,8 +61,8 @@ class QLearning:
         for i in range(len(batch)):
             predictions.append(self.net.predict(batch[i].state))
 
-            optimal_prediction = predictions[i].clone()
-            optimal_prediction[batch[i].action] = batch[i].reward
+            optimal_prediction = self.target_net.predict(batch[i].state)
+            optimal_prediction[batch[i].action] += batch[i].reward
             optimal_predictions.append(optimal_prediction)
 
         loss = f.mse_loss(t.stack(predictions), t.stack(optimal_predictions))
